@@ -2,6 +2,7 @@ package tfw.immutable.iis.shortiis;
 
 import java.io.IOException;
 import tfw.check.Argument;
+import tfw.immutable.iis.IisFromIlaUtil;
 import tfw.immutable.ila.shortila.ShortIla;
 
 public final class ShortIisFromShortIla {
@@ -29,30 +30,26 @@ public final class ShortIisFromShortIla {
 
         @Override
         protected int readImpl(short[] array, int offset, int length) throws IOException {
-            if (index == ila.length()) {
-                return -1;
+            final int elementsToGet = IisFromIlaUtil.read(ila.length(), index, length);
+
+            if (elementsToGet > -1) {
+                ila.get(array, offset, index, elementsToGet);
+
+                index += elementsToGet;
             }
-
-            final int elementsToGet = (int) Math.min(ila.length() - index, length);
-
-            ila.get(array, offset, index, elementsToGet);
-
-            index += elementsToGet;
 
             return elementsToGet;
         }
 
         @Override
         protected long skipImpl(long n) throws IOException {
-            if (index == ila.length()) {
-                return -1;
+            final long elementsSkipped = IisFromIlaUtil.skip(ila.length(), index, n);
+
+            if (elementsSkipped > -1) {
+                index += elementsSkipped;
             }
 
-            final long originalIndex = index;
-
-            index = Math.min(ila.length(), index + n);
-
-            return index - originalIndex;
+            return elementsSkipped;
         }
     }
 }

@@ -66,6 +66,7 @@ class FloatIisFromFloatIlaTest {
             }
 
             assertEquals(-1, iis.skip(1));
+            assertEquals(-1, iis.skip(1));
         }
     }
 }
